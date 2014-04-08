@@ -1,0 +1,66 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="A food truck locator">
+        <meta name="author" content="Kevin Tse">
+
+        <title>Food Truck Locator</title>
+
+        <link rel="stylesheet" href="{% static "foodtruck/css/bootstrap.min.css" %}" />
+        <link rel="stylesheet" href="{% static "foodtruck/css/index.css" %}" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script type="text/javascript"
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAm-Fk4VaB-3_Z-iBOakEjVqQkrBg16y_8&sensor=false">
+        </script>
+        <script src="{% static "foodtruck/js/backbone-min.js" %}"></script>
+        <script src="{% static "foodtruck/js/underscore-min.js" %}"></script>
+        <script src="{% static "foodtruck/js/index.js" %}"></script>
+
+    </head>
+
+    <body>
+
+        <div class="jumbotron">
+            <div class="container">
+                <h1>Food Truck Locator</h1>
+                <p>Type your address below to see what food trucks are close by.</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <form>
+                        <label for="address">Address</label>
+                        <input type="text" name="address" />
+                        <select name="distance">
+                            <option value="0.5">Within 0.5 miles</option>
+                            <option value="1">Within 1 mile</option>
+                            <option value="2">Within 2 miles</option>
+                            <option value="5">Within 5 miles</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="map-canvas"></div>
+                </div>
+            </div>
+
+            <hr>
+
+            <footer>
+                <p>
+                    &copy; Kevin Tse 2014
+                </p>
+            </footer>
+        </div>
+    </body>
+</html>
+
