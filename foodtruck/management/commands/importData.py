@@ -27,7 +27,7 @@ class Command(BaseCommand):
                     
                     # Use given lat/long if provided
                     if (row['Latitude'] and row['Longitude']):
-                        location = Point(float(row['Latitude']), float(row['Longitude']))
+                        location = Point(float(row['Longitude']), float(row['Latitude']))
                     # Use the Google Geocoding API if not provided
                     else:     
                         address = urllib.parse.quote_plus(row['Address'])
@@ -37,7 +37,7 @@ class Command(BaseCommand):
                         if data['status'] == 'OK':
                             lat = data['results'][0]['geometry']['location']['lat']
                             lng = data['results'][0]['geometry']['location']['lng']
-                            location = Point(float(lat), float(lng))
+                            location = Point(float(lng), float(lat))
                      
                     foodTruck = FoodTruck(name=row['Applicant'], address=row['Address'], location=location)
                     foodTruck.save()

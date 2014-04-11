@@ -2,3 +2,4 @@ venv
 *.pyc
 staticfiles
 foodtruck/data
+mysite.log

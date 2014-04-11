@@ -17,14 +17,19 @@
         <script type="text/javascript"
           src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAm-Fk4VaB-3_Z-iBOakEjVqQkrBg16y_8&sensor=false">
         </script>
-        <script src="{% static "foodtruck/js/backbone-min.js" %}"></script>
         <script src="{% static "foodtruck/js/underscore-min.js" %}"></script>
+        <script src="{% static "foodtruck/js/backbone-min.js" %}"></script>
         <script src="{% static "foodtruck/js/index.js" %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var nearby_foodtrucks = adjustBootstrappedData({{ nearby_foodtrucks|safe }});
+                addMarkers(nearby_foodtrucks);
+            });
+        </script>
 
     </head>
 
     <body>
-
         <div class="jumbotron">
             <div class="container">
                 <h1>Food Truck Locator</h1>
@@ -35,15 +40,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <form>
-                        <label for="address">Address</label>
-                        <input type="text" name="address" />
-                        <select name="distance">
-                            <option value="0.5">Within 0.5 miles</option>
-                            <option value="1">Within 1 mile</option>
-                            <option value="2">Within 2 miles</option>
-                            <option value="5">Within 5 miles</option>
-                        </select>
+                    <form class="form-inline" role="form" id="search">
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" name="address" />
+                        </div>
+                        <button type="submit" class="btn btn-default">Search</button>
                     </form>
                 </div>
             </div>
