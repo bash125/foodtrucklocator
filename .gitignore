@@ -4,3 +4,4 @@ staticfiles
 foodtruck/data
 mysite.log
 .settings
+.env
