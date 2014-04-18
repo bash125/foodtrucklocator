@@ -1,6 +1,5 @@
 from tastypie.resources import Resource
 from tastypie import fields
-import configparser
 from rauth import OAuth1Session
 import os
 import re
@@ -33,14 +32,11 @@ class FoodTruckResource(Resource):
             [neLat, neLng] = [float(c) for c in re.findall('[0-9.-]+', bundle.request.GET['ne'])]
             [swLat, swLng] = [float(c) for c in re.findall('[0-9.-]+', bundle.request.GET['sw'])]
             
-            config = configparser.ConfigParser()
-            config.read(os.path.dirname(os.path.realpath(__file__)) + '/data/keys.ini')
-            
             # Set up a session to the Yelp API
-            session = OAuth1Session(consumer_key = config['Yelp']['consumer_key'],
-                                          consumer_secret = config['Yelp']['consumer_secret'],
-                                          access_token = config['Yelp']['token'],
-                                          access_token_secret = config['Yelp']['token_secret'])
+            session = OAuth1Session(consumer_key = os.environ['YELP_CONSUMER_KEY'],
+                                          consumer_secret = os.environ['YELP_CONSUMER_SECRET'],
+                                          access_token = os.environ['YELP_TOKEN'],
+                                          access_token_secret = os.environ['YELP_TOKEN_SECRET'])
             
             searchParams = {
                     'category_filter': 'foodtrucks',
@@ -52,11 +48,11 @@ class FoodTruckResource(Resource):
             if 'name' in bundle.request.GET and bundle.request.GET['name']:
                 searchParams['term'] = bundle.request.GET['name']
             
-#             response = session.get('http://api.yelp.com/v2/search',params=searchParams)
-#             parsed_response = response.json()
+            response = session.get('http://api.yelp.com/v2/search',params=searchParams)
+            parsed_response = response.json()
 #             logger.debug(parsed_response)
-            import pickle
-            parsed_response = pickle.load(open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'rb'))    
+#             import pickle
+#             parsed_response = pickle.load(open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'rb'))    
            
             for foodTruck in parsed_response['businesses']:
                 if foodTruck['is_closed'] == False:
