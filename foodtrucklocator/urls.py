@@ -9,11 +9,11 @@ ft_api = Api(api_name='v1')
 ft_api.register(FoodTruckResource())
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'foodtrucklocator.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
+    # Redirect to the admin page
     url(r'^admin/', include(admin.site.urls)),
+    # Redirect to the tastypie API
     url(r'^api/', include(ft_api.urls)),
+    # Redirect to the main index.html page
     url(r'^$', include('foodtruck.urls')),
 
 )

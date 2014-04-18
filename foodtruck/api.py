@@ -8,11 +8,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 class FoodTruck(object):
+    '''
+    Generic FoodTruck object to pass around internally.
+    '''
     # Define a new object from whatever parameters are passed in via the dict
     def __init__(self, **entries): 
         self.__dict__.update(entries)
 
 class FoodTruckResource(Resource):
+    '''
+    Tastypie non-ORM resource to capture Yelp data and pass it back to the client.
+    '''
+    # Define all the relevant "model" fields here without actually defining a Django ORM model 
     name = fields.CharField(attribute='name')
     display_address = fields.CharField(attribute='display_address')
     url = fields.CharField(attribute='url')
@@ -26,6 +33,20 @@ class FoodTruckResource(Resource):
         object_class = FoodTruck
 
     def obj_get_list(self, bundle, **kwargs):
+        '''
+        Search's Yelp's API for relevant food trucks defined in the search parameters given in bundle. 
+        
+        :param bundle: A Tastypie bundle containing, among other things, the HTTP request containing search parameters.
+        
+        Mandatory parameters are:
+            -ne: coordinates (in latitude, longitude form) representing the north-eastern point of the search area.
+            -sw: coordinates (in latitude, longitude form) representing the south-wetern point of the search area.
+        
+        Optional parameters are:
+            -name: a search term relevant to the food truck you are looking for, i.e. waffles, HappyIceCreamTruck, etc.
+        
+        :type bundle: Bundle.
+        '''
         foodTrucks = []
         if 'ne' in bundle.request.GET and bundle.request.GET['ne'] and 'sw' in bundle.request.GET and bundle.request.GET['sw']:
             
@@ -50,10 +71,7 @@ class FoodTruckResource(Resource):
             
             response = session.get('http://api.yelp.com/v2/search',params=searchParams)
             parsed_response = response.json()
-#             logger.debug(parsed_response)
-#             import pickle
-#             parsed_response = pickle.load(open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'rb'))    
-           
+
             for foodTruck in parsed_response['businesses']:
                 if foodTruck['is_closed'] == False:
                     
