@@ -65,6 +65,7 @@
               var foodTruckView = new FoodTruckView({ model: foodTruck });
               var listContent = foodTruckView.render().el;
 
+              //Change the list view link to open the info window directly
               $(listContent).find('a').each(function() {
                 $(this).click(function() {
                     foodTruckView.openInfoWindow(foodTruckView.marker);
