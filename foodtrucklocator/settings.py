@@ -86,7 +86,7 @@ STATIC_ROOT = os.path.join(PROJECT_PATH, 'staticfiles')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_PATH, 'static'),
+    os.path.join(PROJECT_PATH, os.pardir, 'foodtruck', 'static'),
 )
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
