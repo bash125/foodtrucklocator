@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Jasmine Spec Runner v2.0.0</title>
+
+  <link rel="shortcut icon" type="image/png" href="lib/jasmine-2.0.0/jasmine_favicon.png">
+  <link rel="stylesheet" type="text/css" href="lib/jasmine-2.0.0/jasmine.css">
+
+  <script type="text/javascript" src="lib/jquery-1.11.0.min.js"></script>
+  <script type="text/javascript" src="lib/underscore-min.js"></script>
+  <script type="text/javascript" src="lib/backbone-min.js"></script>
+  
+  <script type="text/javascript" src="lib/jasmine-2.0.0/jasmine.js"></script>
+  <script type="text/javascript" src="lib/jasmine-2.0.0/jasmine-html.js"></script>
+  <script type="text/javascript" src="lib/jasmine-2.0.0/boot.js"></script>
+  <script type="text/javascript" src="lib/sinon-1.9.1.js"></script>
+
+  <!-- include source files here... -->
+  <!-- duplicating the template as there doesn't seem to be a good way to include external underscore templates -->
+  <script id="foodTruckTemplate" type="text/template">
+    <div class='panel-heading'>
+        <a href='<%= url %>'> <%= name %> </a>
+    </div>
+    <div class='panel-body'>
+        <p><%= display_address %></p>
+        <p>
+            <img src='<%= rating_img_url %>' alt='<%= rating %> stars' />
+            <%= review_count %> review<%= (review_count === 1 ? '' : 's') %>
+        </p>
+    </div>
+  </script>
+  <script type="text/javascript" src="src/FoodTruck.js"></script>
+
+  <!-- include spec files here... -->
+  <script type="text/javascript" src="spec/FoodTruckSpec.js"></script>
+
+</head>
+
+<body>
+</body>
+</html>
