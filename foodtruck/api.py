@@ -21,6 +21,7 @@ class FoodTruckResource(Resource):
     '''
     # Define all the relevant "model" fields here without actually defining a Django ORM model 
     name = fields.CharField(attribute='name')
+    categories = fields.CharField(attribute='categories')
     display_address = fields.CharField(attribute='display_address')
     url = fields.CharField(attribute='url')
     review_count = fields.IntegerField(attribute='review_count')
@@ -69,23 +70,24 @@ class FoodTruckResource(Resource):
             if 'name' in bundle.request.GET and bundle.request.GET['name']:
                 searchParams['term'] = bundle.request.GET['name']
             
-#             response = session.get('http://api.yelp.com/v2/search',params=searchParams)
-#             parsed_response = response.json()
-            import pickle
-            parsed_response = pickle.load(open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'rb'))    
+            response = session.get('http://api.yelp.com/v2/search',params=searchParams)
+            parsed_response = response.json()
+#             import pickle
+#             parsed_response = pickle.load(open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'rb'))    
 
 
             for foodTruck in parsed_response['businesses']:
                 if foodTruck['is_closed'] == False:
                     
                     display_address = "\n".join(foodTruck['location']['display_address'])
+                    # Get rid of the Yelp category identifiers
+                    categories = ", ".join([x[0] for x in foodTruck['categories']])
 
                     ftModel = {
                                 'name': foodTruck['name'],
                                 'display_address': display_address,
                                 'url': foodTruck['url'],
-                                # Get rid of food truck categories
-                                'categories': foodTruck['categories'],
+                                'categories': categories,
                                 'review_count': foodTruck['review_count'],
                                 'rating_img_url': foodTruck['rating_img_url'],
                                 'rating': foodTruck['rating'],

@@ -18,10 +18,10 @@ var FoodTruckView = Backbone.View.extend({
           content: this.render().el
         });
         
-        //Because we lose the reference to the model, we modify openInfoWindow to reference the marker instead
+        //Because we lose the reference to the model, we reference the marker instead
         google.maps.event.addListener(this.marker, 'click', function () {
             if (mapView.prevInfoWindow) {
-              mapView.prevInfoWindow.close();
+                mapView.prevInfoWindow.close();
             }
 
             this.infoWindow.open(mapView.map, this);
@@ -30,21 +30,12 @@ var FoodTruckView = Backbone.View.extend({
     },
     destroy: function() {
         this.marker.setMap(null);
-        this.$el.remove();
     },
     render: function() {
         this.model.set('display_address', this.model.get('display_address').replace(/\n/g, '<br />'));
         this.$el.html(this.foodTruckTemplate(this.model.attributes));
         this.$el.addClass('panel panel-default');
         return this;
-    },
-    openInfoWindow: function(marker) {
-        if (mapView.prevInfoWindow) {
-          mapView.prevInfoWindow.close();
-        }
-
-        marker.infoWindow.open(mapView.map, marker);
-        mapView.prevInfoWindow = marker.infoWindow;
     }
 });
 
@@ -56,47 +47,26 @@ var FoodTruckCollection = Backbone.Collection.extend({
     }
 });
 
-var FoodTruckCollectionView = Backbone.View.extend({
-    el: "#listView",
-    initialize: function() {
-        this.listenTo(this.collection, 'add', this.render);
-        this.listenTo(this.collection, 'remove', this.render);
-    },
-    render: function() {
-        this.$el.empty();
-        this.collection.each(function(foodTruck){
-          var foodTruckView = new FoodTruckView({ model: foodTruck });
-          var listContent = foodTruckView.render().el;
-
-          //Change the list view link to open the info window directly
-          $(listContent).find('a').each(function() {
-            $(this).click(function() {
-                foodTruckView.openInfoWindow(foodTruckView.marker);
-                return false;
-            });
-          });
-
-          this.$el.append(listContent); 
-        }, this);
-        return this;
-    }
-});
-
 var FoodTruckMapView = Backbone.View.extend({
     el: "#map-canvas",
 
     initialize: function() {
-        this.listenTo(this.collection, 'add', this.render);
-        this.listenTo(this.collection, 'remove', this.render);
-
+        var mapViewObj = this;
         var mapOptions = {
-            //Center on San Francisco
-            center : new google.maps.LatLng(37.770999, -122.419404),
             zoom : 14
         };
         this.map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-
-        var mapViewObj = this;
+        
+        //Use W3C geolocation if available
+        if (navigator.geolocation) { 
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var currentLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+                mapViewObj.map.setCenter(currentLocation);
+            });
+        } else {
+            //Center on San Francisco by default
+            this.map.setCenter(new google.maps.LatLng(37.786235, -122.402517));
+        }
 
         //Update the map when a user has finished dragging the map...
         google.maps.event.addListener(this.map, 'dragend', function() {
@@ -108,8 +78,8 @@ var FoodTruckMapView = Backbone.View.extend({
             mapViewObj.updateMap();
         });
 
-        //..or initially on start-up
-        google.maps.event.addListenerOnce(this.map, 'idle', function() {
+        //..or initially on start-up when the center changes
+        google.maps.event.addListenerOnce(this.map, 'center_changed', function() {
             mapViewObj.updateMap();
         });
 
@@ -128,6 +98,32 @@ var FoodTruckMapView = Backbone.View.extend({
 
         this.collection.fetch({ 
             data: $.param(searchParams),
+            success: function(collection, response, options) {
+                
+                var name;
+                
+                //Parse the query string to determine what the name field was
+                var urlParams = decodeURIComponent(options.data.replace(/\+/g, " ")).split("&");
+                for (var i = 0; i < urlParams.length; i++) {
+                    var keyVal = urlParams[i].split("=");
+                    if (keyVal[0] === 'name') {
+                        name = keyVal[1].toLowerCase();
+                    }
+                }
+                
+                //Only select the first result with that search term
+                var hasBeenClicked = false;
+                
+                collection.each(function(foodTruck){
+                  var foodTruckView = new FoodTruckView({ model: foodTruck });
+
+                  if (name && !hasBeenClicked && foodTruck.get('name').toLowerCase().indexOf(name) > -1 ) {
+                      google.maps.event.trigger(foodTruckView.marker, 'click');
+                      hasBeenClicked = true;
+                  }
+                  
+                }, this);
+            }
         });
     },
     moveMap: function(latlng) {
@@ -144,29 +140,31 @@ var FormView = Backbone.View.extend({
         if (event) {
             event.preventDefault();
         } 
-
         var name = $.trim(this.$el.children().find("input[name='name']").val());
         var address = $.trim(this.$el.children().find("input[name='address']").val());
-        var boundaries = mapView.map.getBounds();
-
-        var geocoder = new google.maps.Geocoder();
         
-        geocoder.geocode( { 'address': address, 'bounds': boundaries }, function(results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-              mapView.moveMap(results[0].geometry.location);
-              mapView.updateMap(name);
-            } else {
-              alert("Error! Try again.");
-            }
-        }); 
-
+        if (address) {
+            var boundaries = mapView.map.getBounds();
+            var geocoder = new google.maps.Geocoder();
+            
+            geocoder.geocode( { 'address': address, 'bounds': boundaries }, function(results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                  mapView.moveMap(results[0].geometry.location);
+                  //Wait until the map center is moved before searching for more food trucks
+                  mapView.updateMap(name); 
+                } else {
+                  alert("Error! Try again.");
+                }
+            });
+        } else {
+            mapView.updateMap(name);
+        }
+        
     }
-    
 });
 
 $(document).ready(function() {
     var formView = new FormView();
     var foodTrucks = new FoodTruckCollection();
-    var listView = new FoodTruckCollectionView({collection: foodTrucks});
     mapView = new FoodTruckMapView({collection: foodTrucks});
 });
