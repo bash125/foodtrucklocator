@@ -21,9 +21,24 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
               
         <link rel="stylesheet" href="{% static "foodtruck/css/index.css" %}" />
-        <script id="foodTruckTemplate" type="text/template">
+        <script id="foodTruckInfoWindow" type="text/template">
             <div class='panel-heading'>
-                <a href='<%= url %>'> <%= name %> </a>
+                <a href='<%= url %>' target="_newtab"> <%= name %> </a>
+            </div>
+            <div class='panel-body'>
+                <p><strong>Category:</strong> <%= categories %></p>
+                <address>
+                    <%= display_address %>
+                </address>
+                <p>
+                    <img src='<%= rating_img_url %>' alt='<%= rating %> stars' />
+                    <%= review_count %> review<%= (review_count === 1 ? '' : 's') %>
+                </p>
+            </div>
+        </script>
+        <script id="foodTruckListItem" type="text/template">
+            <div class='panel-heading'>
+                <a href='#'> <%= name %> </a>
             </div>
             <div class='panel-body'>
                 <p><strong>Category:</strong> <%= categories %></p>
@@ -53,10 +68,14 @@
                 <div class="col-xs-12">
                     <form class="form-inline" role="form" id="search">
                         <div class="form-group">
-                            <label for="address">Find</label>
-                            <input type="text" name="name" placeholder="Name/type of food truck" size=25 />
-                            <label for="address">Near</label>
-                            <input type="text" name="address" placeholder="An address" size=25 />
+                            <div class="form-group">
+                                <label for="address">Find</label>
+                                <input type="text" name="name" placeholder="Name/type of food truck" size=25 />                          
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Near</label>
+                                <input type="text" name="address" placeholder="An address" size=25 />
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-default">Search</button>
                     </form>
@@ -65,12 +84,12 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-12">
+                <div class="col-xs-9">
                     <div id="map-canvas"></div>
                 </div>
-                <!-- <div class="col-xs-6">
+                <div class="col-xs-3">
                     <div class="pre-scrollable" id="listView"></div>
-                </div> -->
+                </div>
             </div>
 
             <hr>

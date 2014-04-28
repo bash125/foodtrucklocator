@@ -73,6 +73,7 @@ class FoodTruckResource(Resource):
             response = session.get('http://api.yelp.com/v2/search',params=searchParams)
             parsed_response = response.json()
 #             import pickle
+#             pickle.dump(parsed_response, open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'wb')) 
 #             parsed_response = pickle.load(open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'rb'))    
 
 

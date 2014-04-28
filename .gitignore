@@ -2,6 +2,6 @@ venv
 *.pyc
 staticfiles
 foodtruck/data
-mysite.log
+server.log
 .settings
 .env
