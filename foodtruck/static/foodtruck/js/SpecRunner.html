@@ -6,7 +6,10 @@
 
   <link rel="shortcut icon" type="image/png" href="lib/jasmine-2.0.0/jasmine_favicon.png">
   <link rel="stylesheet" type="text/css" href="lib/jasmine-2.0.0/jasmine.css">
-
+  
+  <script type="text/javascript"
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAm-Fk4VaB-3_Z-iBOakEjVqQkrBg16y_8&sensor=true">
+  </script>
   <script type="text/javascript" src="lib/jquery-1.11.0.min.js"></script>
   <script type="text/javascript" src="lib/underscore-min.js"></script>
   <script type="text/javascript" src="lib/backbone-min.js"></script>
@@ -18,18 +21,36 @@
 
   <!-- include source files here... -->
   <!-- duplicating the template as there doesn't seem to be a good way to include external underscore templates -->
-  <script id="foodTruckTemplate" type="text/template">
-    <div class='panel-heading'>
-        <a href='<%= url %>'> <%= name %> </a>
-    </div>
-    <div class='panel-body'>
-        <p><%= display_address %></p>
-        <p>
-            <img src='<%= rating_img_url %>' alt='<%= rating %> stars' />
-            <%= review_count %> review<%= (review_count === 1 ? '' : 's') %>
-        </p>
-    </div>
-  </script>
+    <script id="foodTruckInfoWindow" type="text/template">
+        <div class='panel-heading'>
+            <a href='<%= url %>' target="_newtab"> <%= name %> </a>
+        </div>
+        <div class='panel-body'>
+            <p><strong>Category:</strong> <%= categories %></p>
+            <address>
+                <%= display_address %>
+            </address>
+            <p>
+                <img src='<%= rating_img_url %>' alt='<%= rating %> stars' />
+                <%= review_count %> review<%= (review_count === 1 ? '' : 's') %>
+            </p>
+        </div>
+    </script>
+    <script id="foodTruckListItem" type="text/template">
+        <div class='panel-heading'>
+            <a href='#'> <%= name %> </a>
+        </div>
+        <div class='panel-body'>
+            <p><strong>Category:</strong> <%= categories %></p>
+            <address>
+                <%= display_address %>
+            </address>
+            <p>
+                <img src='<%= rating_img_url %>' alt='<%= rating %> stars' />
+                <%= review_count %> review<%= (review_count === 1 ? '' : 's') %>
+            </p>
+        </div>
+    </script>
   <script type="text/javascript" src="src/FoodTruck.js"></script>
 
   <!-- include spec files here... -->

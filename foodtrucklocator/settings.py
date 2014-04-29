@@ -19,9 +19,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = os.environ.get('DEBUG', False) == 'True'
 
-TEMPLATE_DEBUG = os.environ.get('DEBUG', False)
+TEMPLATE_DEBUG = os.environ.get('DEBUG', False) == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -100,9 +100,8 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
-                       'pathname=%(pathname)s lineno=%(lineno)s ' +
-                       'funcname=%(funcName)s %(message)s'),
+            'format': ('[%(asctime)s][%(levelname)s][%(filename)s][%(funcName)s (%(lineno)s)]' +
+                       ': %(message)s'),
             'datefmt': '%Y-%m-%d %H:%M:%S'
         },
         'simple': {
@@ -121,7 +120,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'default': {
+        'foodtruck': {
             'handlers': ['console'],
             'level': 'INFO',
         }

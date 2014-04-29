@@ -10,6 +10,10 @@ var FoodTruckModel = Backbone.Model.extend({
     destroy: function() {
         this.markerView.destroy();
         this.listView.destroy();
+    },
+    //When the model is removed from the collection, destroy it as well
+    remove: function() {
+        this.destroy();
     }
     
 });
@@ -58,7 +62,7 @@ var FoodTruckMapView = Backbone.View.extend({
         var mapOptions = {
             zoom : 14
         };
-        this.map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+        this.map = new google.maps.Map(this.$el, mapOptions);
 
         //Update the map when a user has finished dragging the map...
         google.maps.event.addListener(this.map, 'dragend', function() {
@@ -74,8 +78,7 @@ var FoodTruckMapView = Backbone.View.extend({
         google.maps.event.addListenerOnce(this.map, 'center_changed', function() {
             mapViewObj.updateMap();
         });
-        
-                
+       
         //Use W3C geolocation if available
         if (navigator.geolocation) { 
             navigator.geolocation.getCurrentPosition(function(position) {
