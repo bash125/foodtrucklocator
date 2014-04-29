@@ -4,12 +4,12 @@ var listView;
 var FoodTruckModel = Backbone.Model.extend({
     urlRoot: '/api/v1/foodtruck/?format=json',
     initialize: function() {
-        this.markerView = new FoodTruckMarkerView({model: this});
-        this.listView = new FoodTruckListItemView({model: this});
+        // this.markerView = new FoodTruckMarkerView({model: this});
+        // this.listView = new FoodTruckListItemView({model: this});
     },
     destroy: function() {
-        this.markerView.destroy();
-        this.listView.destroy();
+        // this.markerView.destroy();
+        // this.listView.destroy();
     },
     //When the model is removed from the collection, destroy it as well
     remove: function() {
@@ -62,7 +62,7 @@ var FoodTruckMapView = Backbone.View.extend({
         var mapOptions = {
             zoom : 14
         };
-        this.map = new google.maps.Map(this.$el, mapOptions);
+        this.map = new google.maps.Map(this.el, mapOptions);
 
         //Update the map when a user has finished dragging the map...
         google.maps.event.addListener(this.map, 'dragend', function() {

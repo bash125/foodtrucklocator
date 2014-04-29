@@ -3,7 +3,7 @@ from tastypie import fields
 from rauth import OAuth1Session
 import os
 import re
-
+import pickle
 import logging
 logger = logging.getLogger(__name__)
 
@@ -70,12 +70,10 @@ class FoodTruckResource(Resource):
             if 'name' in bundle.request.GET and bundle.request.GET['name']:
                 searchParams['term'] = bundle.request.GET['name']
             
-            response = session.get('http://api.yelp.com/v2/search',params=searchParams)
-            parsed_response = response.json()
-#             import pickle
+#             response = session.get('http://api.yelp.com/v2/search',params=searchParams)
+#             parsed_response = response.json()
 #             pickle.dump(parsed_response, open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'wb')) 
-#             parsed_response = pickle.load(open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'rb'))    
-
+            parsed_response = pickle.load(open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'rb'))
 
             for foodTruck in parsed_response['businesses']:
                 if foodTruck['is_closed'] == False:
@@ -95,6 +93,7 @@ class FoodTruckResource(Resource):
                                 'latitude': foodTruck['location']['coordinate']['latitude'],
                                 'longitude': foodTruck['location']['coordinate']['longitude']
                                 }
+                    import json
+                    logger.info(json.dumps(ftModel))
                     foodTrucks.append(FoodTruck(**ftModel))
-
         return foodTrucks
