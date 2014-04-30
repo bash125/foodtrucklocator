@@ -32,6 +32,7 @@ var FoodTruckListView = Backbone.View.extend({
 //List view is in charge of adding itself to and from the div items on the right
 var FoodTruckListItemView = Backbone.View.extend({
     tagName: "div",
+    className: "panel panel-default",
     foodTruckTemplate: _.template($("#foodTruckListItem").html()),
     events: {
         "click a": "openInfoWindow"
@@ -45,7 +46,6 @@ var FoodTruckListItemView = Backbone.View.extend({
     render: function() {
         this.model.set('display_address', this.model.get('display_address').replace(/\n/g, '<br />'));
         this.$el.html(this.foodTruckTemplate(this.model.attributes));
-        this.$el.addClass('panel panel-default');
         return this;
     },
     openInfoWindow: function() {
