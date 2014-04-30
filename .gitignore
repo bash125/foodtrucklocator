@@ -5,3 +5,5 @@ foodtruck/data
 server.log
 .settings
 .env
+.project
+.pydevproject
