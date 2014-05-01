@@ -1,56 +1,41 @@
 describe("FoodTruckListView", function() {
     beforeEach(function() {
-        this.model = new Backbone.Model({
-            review_count : 27,
-            display_address : 'Hoboken, NJ 07030',
-            latitude : 40.753141,
-            name : 'Aroy-D, The Thai Elephant Truck',
-            categories : 'Food Trucks, Thai',
-            url : 'http://www.yelp.com/biz/aroy-d-the-thai-elephant-truck-hoboken',
-            rating : 4.0,
-            longitude : -74.025085,
-            rating_img_url : 'http://s3-media4.ak.yelpcdn.com/assets/2/www/img/c2f3dd9799a5/ico/stars/v1/stars_4.png'
-        });
-        this.view = new FoodTruckListItemView({
-            model : this.model
+        setFixtures('<div id="listView"></div>');
+        
+        this.collection = new Backbone.Collection();
+        this.view = new FoodTruckListView({
+            collection: this.collection
         });
         
-        setFixtures('<div id="listView"></div>');
     });
 
     describe("Instantiation", function() {
         it("should create a div element", function() {
             expect(this.view.el.nodeName).toEqual("DIV");
         });
-
-        it("should have the right classes", function() {
-            expect(this.view.$el.hasClass("panel")).toBeTruthy();
-            expect(this.view.$el.hasClass("panel-default")).toBeTruthy();
-        });
-
-        it("returns the view object", function() {
-            expect(this.view.render()).toEqual(this.view);
+        it("should have the right id", function() {
+            expect(this.view.el.id).toEqual("listView");
         });
     });
-
-    describe("Template", function() {
-        beforeEach(function() {
-            $('#listView').append(this.view.render().el);
+    
+    describe("Collection addition", function() {
+        
+        it("should append new models", function() {
+            var foodTrucks = this.fixtures.FoodTrucks.valid.response.objects;
+            for (var i = 0; i < foodTrucks.length; i++) {
+                //Mock a simple fake object
+                var model = new Backbone.Model(foodTrucks[i]);
+                model.listView = {
+                    render: function() {
+                        this.el = document.createElement('div');
+                        return this;
+                    }
+                };
+                this.collection.add(model);
+                expect($('#listView').children().length).toEqual(i+1); 
+            }    
         });
         
-        it("has the correct URL" , function() {
-            expect($('#listView').find('a')).toHaveAttr('href', '#');
-        });
-        
-        it("has the correct heading" , function() {
-            expect($('#listView').find('a')).toHaveText('Aroy-D, The Thai Elephant Truck');
-        });
-        
-        it("has the correct number of stars" , function() {
-            expect($('#listView').find('img')).toHaveAttr('src', 
-            'http://s3-media4.ak.yelpcdn.com/assets/2/www/img/c2f3dd9799a5/ico/stars/v1/stars_4.png');
-        });
-
     });
 
 }); 
