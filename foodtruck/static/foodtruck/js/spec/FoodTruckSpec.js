@@ -9,6 +9,13 @@ beforeEach(function() {
 describe('FoodTruck model', function() {
 
     beforeEach(function() {
+        
+        this.listItemViewStub = sinon.stub(window, "FoodTruckListItemView");
+        this.listItemViewStub.returns(new Backbone.View());
+        
+        this.markerViewStub = sinon.stub(window, "FoodTruckMarkerView");
+        this.markerViewStub.returns(new Backbone.View());
+        
         this.foodTruck = new FoodTruckModel({
             review_count : 27,
             display_address : 'Hoboken, NJ 07030',
@@ -20,7 +27,16 @@ describe('FoodTruck model', function() {
             longitude : -74.025085,
             rating_img_url : 'http://s3-media4.ak.yelpcdn.com/assets/2/www/img/c2f3dd9799a5/ico/stars/v1/stars_4.png'
         });
+        
+        this.foodTruck.listView = FoodTruckListItemView;
+        this.foodTruck.markerView = FoodTruckMarkerView;
+        
 
+    });
+    
+    afterEach(function() {
+        this.listItemViewStub.restore();
+        this.markerViewStub.restore();
     });
 
     describe('when instantiated', function() {
@@ -29,8 +45,8 @@ describe('FoodTruck model', function() {
             expect(this.foodTruck.url()).toEqual('/api/v1/foodtruck/?format=json');
         });
         it('should have views instantiated', function() {
-            expect(this.foodTruck.listView);
-            expect(this.foodTruck.markerView);
+            expect(this.foodTruck.listView).toBeTruthy();
+            expect(this.foodTruck.markerView).toBeTruthy();
         });
 
     });

@@ -1,15 +1,14 @@
 var mapView;
-var listView;
 
 var FoodTruckModel = Backbone.Model.extend({
     urlRoot: '/api/v1/foodtruck/?format=json',
     initialize: function() {
-        // this.markerView = new FoodTruckMarkerView({model: this});
-        // this.listView = new FoodTruckListItemView({model: this});
+        this.markerView = new FoodTruckMarkerView({model: this});
+        this.listView = new FoodTruckListItemView({model: this});
     },
     destroy: function() {
-        // this.markerView.destroy();
-        // this.listView.destroy();
+        this.markerView.destroy();
+        this.listView.destroy();
     },
     //When the model is removed from the collection, destroy it as well
     remove: function() {
@@ -26,10 +25,16 @@ var FoodTruckCollection = Backbone.Collection.extend({
     }
 });
 var FoodTruckListView = Backbone.View.extend({
-    el: "#listView"
+    el: "#listView",
+    initialize : function () {
+        this.listenTo(this.collection, 'add', this.addListItem);
+    },
+    addListItem: function(model) {
+        this.$el.append(model.listView.render().el);
+    }
 });
 
-//List view is in charge of adding itself to and from the div items on the right
+//List view is in charge of adding itself to the div items on the right
 var FoodTruckListItemView = Backbone.View.extend({
     tagName: "div",
     className: "panel panel-default",
@@ -38,7 +43,6 @@ var FoodTruckListItemView = Backbone.View.extend({
         "click a": "openInfoWindow"
     },
     initialize: function() {
-        listView.$el.append(this.render().el);  
     },
     destroy: function() {
         this.$el.remove();
@@ -207,6 +211,6 @@ var FormView = Backbone.View.extend({
 $(document).ready(function() {
     var formView = new FormView();
     var foodTrucks = new FoodTruckCollection();
-    listView = new FoodTruckListView({collection: foodTrucks});
+    var listView = new FoodTruckListView({collection: foodTrucks});
     mapView = new FoodTruckMapView({collection: foodTrucks});
 });

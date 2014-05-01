@@ -62,6 +62,12 @@ describe("FoodTruckCollection", function() {
     
     describe('when fetching from an external API', function() {
         beforeEach(function() {
+            this.listItemViewStub = sinon.stub(window, "FoodTruckListItemView");
+            this.listItemViewStub.returns(new Backbone.View());
+        
+            this.markerViewStub = sinon.stub(window, "FoodTruckMarkerView");
+            this.markerViewStub.returns(new Backbone.View());    
+            
             this.foodTrucks = new FoodTruckCollection();
             this.fixture = this.fixtures.FoodTrucks.valid.response;
             this.server = sinon.fakeServer.create();
@@ -70,6 +76,8 @@ describe("FoodTruckCollection", function() {
     
         afterEach(function() {
             this.server.restore();
+            this.listItemViewStub.restore();
+            this.markerViewStub.restore();
         });
     
         it('should make the correct request', function() {
@@ -89,6 +97,3 @@ describe("FoodTruckCollection", function() {
     });
  
 });
-
-
-

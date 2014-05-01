@@ -5,5 +5,12 @@ beforeEach(function() {
             "Content-Type" : "application/json"
         }, JSON.stringify(responseText)];
     };
+    
+    this.mapViewStub = sinon.stub(window, "FoodTruckMapView");
+    this.mapViewStub.returns(new Backbone.View());
 
 }); 
+
+afterEach(function() {
+    this.mapViewStub.restore();
+});

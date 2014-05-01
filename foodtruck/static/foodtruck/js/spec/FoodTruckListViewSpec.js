@@ -1,7 +1,5 @@
-describe("FoodTruckListItemView", function() {
+describe("FoodTruckListView", function() {
     beforeEach(function() {
-        setFixtures('<div id="listView"></div>');
-        
         this.model = new Backbone.Model({
             review_count : 27,
             display_address : 'Hoboken, NJ 07030',
@@ -17,9 +15,7 @@ describe("FoodTruckListItemView", function() {
             model : this.model
         });
         
-        //Assume the list view has already appended the element
-        $('#listView').append(this.view.render().el);
-
+        setFixtures('<div id="listView"></div>');
     });
 
     describe("Instantiation", function() {
@@ -35,24 +31,13 @@ describe("FoodTruckListItemView", function() {
         it("returns the view object", function() {
             expect(this.view.render()).toEqual(this.view);
         });
-        
-        it("should add the list item", function() {
-            expect($('#listView')).toContainText('Aroy-D, The Thai Elephant Truck');
-        });
-    });
-    
-    describe("Destruction", function() {
-        beforeEach(function() {
-            this.view.destroy();
-        });
-        
-        it("should remove the list item", function() {
-            expect($('#listView')).not.toContainText('Aroy-D, The Thai Elephant Truck');
-        });
     });
 
     describe("Template", function() {
-      
+        beforeEach(function() {
+            $('#listView').append(this.view.render().el);
+        });
+        
         it("has the correct URL" , function() {
             expect($('#listView').find('a')).toHaveAttr('href', '#');
         });
