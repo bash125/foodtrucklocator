@@ -70,10 +70,8 @@ class FoodTruckResource(Resource):
             if 'name' in bundle.request.GET and bundle.request.GET['name']:
                 searchParams['term'] = bundle.request.GET['name']
             
-#             response = session.get('http://api.yelp.com/v2/search',params=searchParams)
-#             parsed_response = response.json()
-#             pickle.dump(parsed_response, open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'wb')) 
-            parsed_response = pickle.load(open(os.path.dirname(os.path.realpath(__file__)) + '/data/mock_data.p', 'rb'))
+            response = session.get('http://api.yelp.com/v2/search',params=searchParams)
+            parsed_response = response.json()
 
             for foodTruck in parsed_response['businesses']:
                 if foodTruck['is_closed'] == False:
