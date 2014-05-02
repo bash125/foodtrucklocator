@@ -20,6 +20,7 @@ class FoodTruckResource(Resource):
     Tastypie non-ORM resource to capture Yelp data and pass it back to the client.
     '''
     # Define all the relevant "model" fields here without actually defining a Django ORM model 
+    id = fields.CharField(attribute='id')
     name = fields.CharField(attribute='name')
     categories = fields.CharField(attribute='categories')
     display_address = fields.CharField(attribute='display_address')
@@ -81,6 +82,7 @@ class FoodTruckResource(Resource):
                     categories = ", ".join([x[0] for x in foodTruck['categories']])
 
                     ftModel = {
+                                'id': foodTruck['id'],
                                 'name': foodTruck['name'],
                                 'display_address': display_address,
                                 'url': foodTruck['url'],
@@ -91,7 +93,5 @@ class FoodTruckResource(Resource):
                                 'latitude': foodTruck['location']['coordinate']['latitude'],
                                 'longitude': foodTruck['location']['coordinate']['longitude']
                                 }
-                    import json
-                    logger.info(json.dumps(ftModel))
                     foodTrucks.append(FoodTruck(**ftModel))
         return foodTrucks

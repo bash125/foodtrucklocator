@@ -25,7 +25,7 @@ describe("FoodTruckListView", function() {
             for (var i = 0; i < foodTrucks.length; i++) {
                 //Mock a simple fake object
                 var model = new Backbone.Model(foodTrucks[i]);
-                model.listView = {
+                model.listItemView = {
                     render: function() {
                         this.el = document.createElement('div');
                         return this;

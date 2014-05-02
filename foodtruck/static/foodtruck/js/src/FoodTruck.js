@@ -2,21 +2,23 @@ var FoodTruckModel = Backbone.Model.extend({
     urlRoot: '/api/v1/foodtruck/?format=json',
     initialize: function() {
         this.markerView = new FoodTruckMarkerView({model: this});
-        this.listView = new FoodTruckListItemView({model: this});
+        this.listItemView = new FoodTruckListItemView({model: this});
     },
     destroy: function() {
         this.markerView.destroy();
-        this.listView.destroy();
-    },
-    //When the model is removed from the collection, destroy it as well
-    remove: function() {
-        this.destroy();
-    }
-    
+        this.listItemView.destroy();
+    }    
 });
 
 var FoodTruckCollection = Backbone.Collection.extend({
     model: FoodTruckModel,
+    initialize: function () {
+        this.bind('remove', this.removeFoodTruck, this);
+    },
+    //When the model is removed from the collection, destroy it as well
+    removeFoodTruck: function (model) {
+        model.destroy();
+    },
     url: '/api/v1/foodtruck/?format=json',
     parse: function(response) {
         return response.objects;
@@ -28,7 +30,7 @@ var FoodTruckListView = Backbone.View.extend({
         this.listenTo(this.collection, 'add', this.addListItem);
     },
     addListItem: function(model) {
-        this.$el.append(model.listView.render().el);
+        this.$el.append(model.listItemView.render().el);
     }
 });
 
