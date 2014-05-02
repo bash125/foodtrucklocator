@@ -6,9 +6,10 @@ beforeEach(function() {
         }, JSON.stringify(responseText)];
     };
     setFixtures('<div id="map-canvas"></div>');
+    navigator.geolocation = false;
   
 }); 
 
 afterEach(function() {
-
+    navigator.geolocation = true;
 });
