@@ -46,11 +46,11 @@ more time.
 Other Projects
 --------------
 
-* [Amazon Realviews](https://github.com/bash125/AmazonRealviews) [(Github)](https://github.com/bash125/foodtrucklocator): 
+* [Amazon Realviews](https://chrome.google.com/webstore/detail/amazon-realviews/anbphiganclbpempkmbichaghobihfji?hl=en) [(Github)](https://github.com/bash125/AmazonRealviews): 
 A Chrome extension to weight Amazon reviews by the number of reviewers. Inspired by my frustrations 
 shopping for bedding.
 
-* [Zeta Psi Rush Toolbox](zptoolbox.herokuapp.com): A Ruby on Rails application to coordinate the rushing efforts 
+* [Zeta Psi Rush Toolbox](http://zptoolbox.herokuapp.com/): A Ruby on Rails application to coordinate the rushing efforts 
 of the Zeta Psi Fraternity. This centralized disparate data sources located in various spreadsheets onto one 
 platform.
 
