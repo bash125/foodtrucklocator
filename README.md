@@ -38,6 +38,10 @@ as much as possible.
 Technical Trade-offs
 --------------
 
+Early on there was a tension between presenting the data in a mobile-friendly format or gear it more towards desktops.
+For this project I chose to focus on desktop users only, although if I had more time I would make a mobile view
+as well.
+
 One consistent request among my beta users was the ability to quickly scan and eliminate food trucks based on 
 categories. While I've added features to get closer to that goal such as a search box to find food trucks by name 
 and adding category information to the info boxes for each food truck, I would implement this feature had I had
