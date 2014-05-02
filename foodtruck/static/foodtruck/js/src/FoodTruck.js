@@ -313,7 +313,7 @@ var FormView = Backbone.View.extend(
                         'bounds' : boundaries
                     }, moveAndUpdateMap);
                 } else {
-                    this.updateMap(name);
+                    this.model.updateMap(name);
                 }
 
             }
