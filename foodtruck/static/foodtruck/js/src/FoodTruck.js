@@ -1,5 +1,3 @@
-var mapView;
-
 var FoodTruckModel = Backbone.Model.extend({
     urlRoot: '/api/v1/foodtruck/?format=json',
     initialize: function() {
@@ -62,6 +60,7 @@ var FoodTruckMapView = Backbone.View.extend({
     el: "#map-canvas",
 
     initialize: function() {
+        _.bindAll(this, "addMarkers");
         var mapViewObj = this;
         var mapOptions = {
             zoom : 14
@@ -109,31 +108,32 @@ var FoodTruckMapView = Backbone.View.extend({
 
         this.collection.fetch({ 
             data: $.param(searchParams),
-            success: function(collection, response, options) {
-                
-                var name;
-                
-                //Parse the query string to determine what the name field was
-                var urlParams = decodeURIComponent(options.data.replace(/\+/g, " ")).split("&");
-                for (var i = 0; i < urlParams.length; i++) {
-                    var keyVal = urlParams[i].split("=");
-                    if (keyVal[0] === 'name') {
-                        name = keyVal[1].toLowerCase();
-                    }
-                }
-                
-                //Only select the first result with that search term
-                var hasBeenClicked = false;
-                
-                collection.each(function(foodTruck){
-                  if (name && !hasBeenClicked && foodTruck.get('name').toLowerCase().indexOf(name) > -1 ) {
-                      google.maps.event.trigger(foodTruck.markerView.marker, 'click');
-                      hasBeenClicked = true;
-                  }
-                  
-                }, this);
-            }
+            success: this.addMarkers
         });
+    },
+    addMarkers: function(collection, response, options) {
+                
+        var name;
+        
+        //Parse the query string to determine what the name field was
+        var urlParams = decodeURIComponent(options.data.replace(/\+/g, " ")).split("&");
+        for (var i = 0; i < urlParams.length; i++) {
+            var keyVal = urlParams[i].split("=");
+            if (keyVal[0] === 'name') {
+                name = keyVal[1].toLowerCase();
+            }
+        }
+        
+        //Only select the first result with that search term
+        var hasBeenClicked = false;
+        
+        collection.each(function(foodTruck){
+            foodTruck.markerView.render(this);
+            if (name && !hasBeenClicked && foodTruck.get('name').toLowerCase().indexOf(name) > -1 ) {
+                  google.maps.event.trigger(foodTruck.markerView.marker, 'click');
+                  hasBeenClicked = true;
+            }
+        }, this);
     },
     moveMap: function(latlng) {
         this.map.panTo(latlng);
@@ -143,7 +143,10 @@ var FoodTruckMapView = Backbone.View.extend({
 var FoodTruckMarkerView = Backbone.View.extend({
     tagName: "div",
     foodTruckTemplate: _.template($("#foodTruckInfoWindow").html()),
-    initialize: function() {
+    destroy: function() {
+        this.marker.setMap(null);
+    },
+    render: function(mapView) {
         this.marker = new google.maps.Marker({
             position: new google.maps.LatLng(this.model.get('latitude'), this.model.get('longitude')),
             map: mapView.map,
@@ -151,11 +154,11 @@ var FoodTruckMarkerView = Backbone.View.extend({
         });
 
         this.marker.infoWindow = new google.maps.InfoWindow({
-          content: this.render().el
+          content: this.renderInfoWindow().el
         });
         
         //Because we lose the reference to the model, we reference the marker instead
-        google.maps.event.addListener(this.marker, 'click', function () {
+        google.maps.event.addListener(this.marker, 'click', function() {
             if (mapView.prevInfoWindow) {
                 mapView.prevInfoWindow.close();
             }
@@ -165,10 +168,7 @@ var FoodTruckMarkerView = Backbone.View.extend({
         });
         
     },
-    destroy: function() {
-        this.marker.setMap(null);
-    },
-    render: function() {
+    renderInfoWindow: function() {
         this.model.set('display_address', this.model.get('display_address').replace(/\n/g, '<br />'));
         this.$el.html(this.foodTruckTemplate(this.model.attributes));
         this.$el.addClass('panel panel-default');
@@ -189,18 +189,19 @@ var FormView = Backbone.View.extend({
         var address = $.trim(this.$el.children().find("input[name='address']").val());
         
         if (address) {
-            var boundaries = mapView.map.getBounds();
+            var boundaries = this.model.map.getBounds();
             var geocoder = new google.maps.Geocoder();
-            
-            geocoder.geocode( { 'address': address, 'bounds': boundaries }, function(results, status) {
+            var moveAndUpdateMap = function(results, status) {
                 if (status === google.maps.GeocoderStatus.OK) {
-                  mapView.moveMap(results[0].geometry.location);
+                  this.moveMap(results[0].geometry.location);
                   //Wait until the map center is moved before searching for more food trucks
-                  mapView.updateMap(name); 
+                  this.updateMap(name); 
                 } else {
                   alert("Error! Try again.");
                 }
-            });
+            };
+            moveAndUpdateMap = _.bind(moveAndUpdateMap, this.model);
+            geocoder.geocode( { 'address': address, 'bounds': boundaries }, moveAndUpdateMap);
         } else {
             mapView.updateMap(name);
         }
@@ -209,8 +210,9 @@ var FormView = Backbone.View.extend({
 });
 
 $(document).ready(function() {
-    var formView = new FormView();
     var foodTrucks = new FoodTruckCollection();
     var listView = new FoodTruckListView({collection: foodTrucks});
-    mapView = new FoodTruckMapView({collection: foodTrucks});
+    var mapView = new FoodTruckMapView({collection: foodTrucks});
+    //Although it's not tied to the map view, the Form view requires a reference to the Map view
+    var formView = new FormView({model: mapView});
 });

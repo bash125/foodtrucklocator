@@ -6,11 +6,9 @@ beforeEach(function() {
         }, JSON.stringify(responseText)];
     };
     setFixtures('<div id="map-canvas"></div>');
-    this.mapViewStub = sinon.stub(window, "FoodTruckMapView");
-    this.mapViewStub.returns(new Backbone.View());
-
+  
 }); 
 
 afterEach(function() {
-    this.mapViewStub.restore();
+
 });

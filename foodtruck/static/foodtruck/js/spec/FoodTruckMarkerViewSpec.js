@@ -1,5 +1,12 @@
 describe("FoodTruckMarkerView", function() {
     beforeEach(function() {
+                   
+        this.googleMarkerStub = sinon.stub(google.maps, "Marker");
+        this.googleMarker = new Backbone.Model({
+            title: 'Aroy-D, The Thai Elephant Truck'
+         });
+        
+        this.googleMarkerStub.returns(this.googleMarker);
         
         this.model = new Backbone.Model({
             review_count : 27,
@@ -14,45 +21,53 @@ describe("FoodTruckMarkerView", function() {
         });
         this.view = new FoodTruckMarkerView({
             model : this.model
-        });       
+        });
+         
+        this.mapView = {
+            map: function () { 
+                return true;
+            }
+        };
+            
+        this.view.render(this.mapView);
 
     });
     
     afterEach(function() {
-        this.mapViewStub.restore();
-    });
-
-    describe("Instantiation", function() {
-        it("should create a div element", function() {
-            expect(this.view.el.nodeName).toEqual("DIV");
-        });
-
-        it("should have the right classes", function() {
-            expect(this.view.$el.hasClass("panel")).toBeTruthy();
-            expect(this.view.$el.hasClass("panel-default")).toBeTruthy();
-        });
-
-        it("returns the view object", function() {
-            expect(this.view.render()).toEqual(this.view);
-        });
+        this.googleMarkerStub.restore();
     });
 
     describe("Template", function() {
-        beforeEach(function() {
-            $('#listView').append(this.view.render().el);
-        });
         
         it("has the correct URL" , function() {
-            expect($('#listView').find('a')).toHaveAttr('href', '#');
+            expect(this.view.$el.find('a')).toHaveAttr('href', 'http://www.yelp.com/biz/aroy-d-the-thai-elephant-truck-hoboken');
         });
         
         it("has the correct heading" , function() {
-            expect($('#listView').find('a')).toHaveText('Aroy-D, The Thai Elephant Truck');
+            expect(this.view.$el.find('a')).toHaveText('Aroy-D, The Thai Elephant Truck');
         });
         
         it("has the correct number of stars" , function() {
-            expect($('#listView').find('img')).toHaveAttr('src', 
+            expect(this.view.$el.find('img')).toHaveAttr('src', 
             'http://s3-media4.ak.yelpcdn.com/assets/2/www/img/c2f3dd9799a5/ico/stars/v1/stars_4.png');
+        });
+
+    });
+    
+    describe("Marker", function() {
+        beforeEach(function() {
+            this.googleInfoWindowStub = sinon.stub(google.maps, "InfoWindow");
+            this.googleInfoWindow = {
+                content: this.view.el
+            };       
+            this.googleInfoWindowStub.returns(this.googleMarker);
+        });
+        afterEach(function() {
+            this.googleInfoWindowStub.restore();
+        });
+        
+        it("has an info window object with the correct data", function() {
+            expect(this.view.marker.infoWindow.content).toEqual(this.view.el);
         });
 
     });
